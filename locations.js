@@ -580,7 +580,7 @@ const locations = {
     },
     {
       "name": "Tactical Bartoli 12G",
-      "description": "Carried by some elite (tunnel) and coca field guards"
+      "description": "Carried by various guards"
     }
   ],
   "Sapienza": [
