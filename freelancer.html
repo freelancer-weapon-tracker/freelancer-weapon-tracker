@@ -65,10 +65,19 @@
       <br>
       <div>Use the <b>Reset</b> menu to reset.</div>
     </div>
+    <!-- Move history below the done-container -->
+    <hr id="history-separator" class="history-separator">
+    <div id="collection-history-container" class="collection-history-container">
+      <div id="collection-history-title" class="collection-history-title">
+        Collection History
+      </div>
+      <ul id="collection-history" class="collection-history-list"></ul>
+    </div>
   </div>
 
   <script>
     let collectedWeapons = [];
+    let collectionHistory = []; // {name, date, rarity}
     let showCollected = false;
     let selectedRarities = new Set(["legendary", "epic", "rare", "common", "tool"]);
     const rarityOrder = {
@@ -169,6 +178,7 @@
       updateVisibility();
       renderRarityCounters();
       renderCollectedCount();
+      renderCollectionHistory(); // <-- render history after locations
     }
 
     function renderWeapons() {
@@ -257,8 +267,10 @@
       });
       if (collectedWeapons.includes(weaponName)) {
         collectedWeapons = collectedWeapons.filter(weapon => weapon !== weaponName);
+        removeFromCollectionHistory(weaponName);
       } else {
         collectedWeapons.push(weaponName);
+        addToCollectionHistory(weaponName);
       }
       saveState();
       setTimeout(function () {
@@ -269,7 +281,6 @@
       renderCollectedCount();
     }
 
-
     function confirmReset(button) {
       var resetType = button.dataset.resetType;
       let message = resetType === "tools" ?
@@ -277,9 +288,12 @@
         "Are you sure you want to reset your collection for all weapons and freelancer tools?"
       if (confirm(message)) {
         if (resetType === "tools") {
+          // Remove tools from collectedWeapons and history
           collectedWeapons = collectedWeapons.filter(weaponName => weaponsData[weaponName].rarity.toLowerCase() !== "tool");
+          collectionHistory = collectionHistory.filter(entry => weaponsData[entry.name]?.rarity?.toLowerCase() !== "tool");
         } else {
           collectedWeapons = [];
+          collectionHistory = [];
         }
         saveState();
         closeResetMenu();
@@ -320,6 +334,7 @@
         let hasInScopeWeapons = weaponsInLocation.some(weapon => selectedRarities.has(weaponsData[weapon.name].rarity.toLowerCase()));
         if (!hasInScopeWeapons || (visibleWeapons.length === 0 && !showCollected)) {
           accordion.classList.add('hidden');
+          accordion.classList.remove('active');
           panel.style.maxHeight = null;
         } else {
           accordion.classList.remove('hidden');
@@ -407,7 +422,6 @@
       });
     }
 
-
     function updateRarities() {
       selectedRarities = new Set();
       document.querySelectorAll('[data-rarity]').forEach(checkbox => {
@@ -472,6 +486,126 @@
       document.getElementById('collected-count').innerHTML = `<b>Collected</b><br/>${collectedCount}/${totalWeapons}`;
     }
 
+    function renderCollectionHistory() {
+      const historyList = document.getElementById('collection-history');
+      const historyTitle = document.getElementById('collection-history-title');
+      const historyContainer = document.getElementById('collection-history-container');
+      historyList.innerHTML = '';
+      document.getElementById('history-separator').style.display = '';
+      
+      // Remove any existing empty message div
+      const existingEmptyMsg = historyContainer.querySelector('.collection-history-empty');
+      if (existingEmptyMsg) {
+        existingEmptyMsg.remove();
+      }
+      
+      if (!collectionHistory.length) {
+        // Show faint message if no weapons collected as a separate div
+        const emptyMsg = document.createElement('div');
+        emptyMsg.className = 'collection-history-empty';
+        emptyMsg.textContent = 'No weapons collected';
+        historyContainer.appendChild(emptyMsg);
+        return;
+      }
+      collectionHistory.forEach((entry, idx) => {
+        const li = document.createElement('li');
+        const infoDiv = document.createElement('div');
+        infoDiv.className = 'history-item-info';
+        
+        const weaponNameDiv = document.createElement('div');
+        weaponNameDiv.innerHTML = `<b>${entry.name}</b>`;
+        
+        const collectionTimeDiv = document.createElement('div');
+        collectionTimeDiv.className = 'collection-time';
+        const date = new Date(entry.date);
+        const dateString = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        collectionTimeDiv.textContent = `Collected ${dateString}`;
+        
+        infoDiv.appendChild(weaponNameDiv);
+        infoDiv.appendChild(collectionTimeDiv);
+        
+        const undoBtn = document.createElement('button');
+        undoBtn.textContent = 'Undo';
+        undoBtn.onmousedown = function(e) { e.stopPropagation(); };
+        undoBtn.onclick = function(e) {
+          e.stopPropagation();
+          undoCollect(entry.name, /*keepAccordionOpen*/true);
+        };
+        li.appendChild(infoDiv);
+        li.appendChild(undoBtn);
+        historyList.appendChild(li);
+      });
+    }
+
+    function addToCollectionHistory(weaponName) {
+      // Remove any previous entry for this weapon
+      collectionHistory = collectionHistory.filter(e => e.name !== weaponName);
+      // Add new entry at the top
+      collectionHistory.unshift({
+        name: weaponName,
+        date: Date.now(),
+        rarity: weaponsData[weaponName]?.rarity?.toLowerCase() || ''
+      });
+      saveState();
+      renderCollectionHistory();
+    }
+
+    function removeFromCollectionHistory(weaponName) {
+      collectionHistory = collectionHistory.filter(e => e.name !== weaponName);
+      saveState();
+      renderCollectionHistory();
+    }
+
+    function undoCollect(weaponName, keepAccordionOpen) {
+      // Find which accordion (if any) is open and its scroll state
+      let openAccordion = document.querySelector('.accordion.active');
+      let openLocation = openAccordion ? openAccordion.dataset.location : null;
+      let panelScroll = null;
+      let openPanel = openAccordion && openAccordion.nextElementSibling ? openAccordion.nextElementSibling : null;
+      if (openPanel) {
+        panelScroll = openPanel.scrollTop;
+      }
+      // Un-collect weapon and remove from history
+      collectedWeapons = collectedWeapons.filter(w => w !== weaponName);
+      removeFromCollectionHistory(weaponName);
+      saveState();
+
+      // Instead of renderLocations(), just update the .collected class in the DOM for visible weapons
+      document.querySelectorAll('.weapon').forEach(weaponDiv => {
+        if (weaponDiv.dataset.weapon === weaponName) {
+          weaponDiv.classList.remove('collected');
+        }
+      });
+      // Also update in the "Weapons Individually" tab
+      document.querySelectorAll(`#weapons .weapon[data-weapon="${weaponName}"]`).forEach(weaponDiv => {
+        weaponDiv.classList.remove('collected');
+      });
+
+      renderWeapons();
+      renderRarityCounters();
+      renderCollectedCount();
+      updateVisibility();
+      renderCollectionHistory();
+
+      // Restore scroll position if needed
+      if (openPanel && panelScroll !== null) {
+        openPanel.scrollTop = panelScroll;
+      }
+
+      // --- Fix for location reappearing but not being openable ---
+      // If a location was hidden and now appears, and it was previously open, forcibly open it
+      if (openLocation && false) {
+        const acc = document.querySelector(`.accordion[data-location="${openLocation}"]`);
+        const panel = acc ? acc.nextElementSibling : null;
+        if (acc && !acc.classList.contains('active')) {
+          acc.classList.add('active');
+          if (panel) {
+            panel.style.maxHeight = panel.scrollHeight + 'px';
+          }
+        }
+      }
+    }
+
     function initializeWeaponsData() {
       Object.keys(weaponsData).forEach(weaponName => {
         let weaponData = weaponsData[weaponName];
@@ -494,7 +628,7 @@
 
     function saveState() {
       localStorage.setItem('collectedWeapons', JSON.stringify(collectedWeapons));
-
+      localStorage.setItem('collectionHistory', JSON.stringify(collectionHistory));
       const settings = {
         showCollected: showCollected,
         selectedRarities: Array.from(selectedRarities),
@@ -504,6 +638,7 @@
 
     function loadState() {
       collectedWeapons = JSON.parse(localStorage.getItem('collectedWeapons')) || [];
+      collectionHistory = JSON.parse(localStorage.getItem('collectionHistory')) || [];
 
       const settings = JSON.parse(localStorage.getItem('settings'));
       if (settings) {
@@ -520,6 +655,7 @@
       renderRarityCounters();
       renderCollectedCount();
       updateVisibility();
+      renderCollectionHistory();
     }
 
     function getRarityOrder(rarity) {
@@ -566,3 +702,4 @@
 </body>
 
 </html>
+`

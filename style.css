@@ -370,3 +370,106 @@ body {
   #collected-count {
     text-align: center;
   }
+
+  .history-separator {
+    border: 0;
+    border-top: 2px solid #d0d0d0;
+    margin: 24px 0; /* was 10px, now 15px for extra 5px buffer below */
+    max-width: 800px;
+  }
+
+  .collection-history-container {
+    max-width: 800px;
+    margin: auto;
+    margin-top: 0;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .collection-history-title {
+    font-size: 1.08em;
+    color: #444;
+    margin-bottom: 6px;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    text-align: center; /* center the title */
+  }
+
+  .dark-mode .collection-history-title {
+    color: #ccc;
+  }
+
+  .collection-history-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    /* Add to ensure no overflow */
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .collection-history-list li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 7px 12px;
+    font-size: 1em;
+    background: #fff;
+    color: #333;
+    border-bottom: 1px solid #d8d8e0;
+  }
+
+  .dark-mode .collection-history-list li {
+    background: #23272a;
+    color: #eee;
+    border-bottom: 1px solid #444;
+  }
+
+  .history-item-info {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    margin-right: 16px;
+  }
+
+  .collection-time {
+    color: #888;
+    font-size: 0.9em;
+    margin-top: 2px;
+  }
+
+  .dark-mode .collection-time {
+    color: #aaa;
+  }
+
+  .collection-history-list button {
+    font-size: 0.95em;
+    background: #e0e4f0;
+    color: #444;
+    border: 1px solid #b0b6c8;
+    border-radius: 4px;
+    cursor: pointer;
+    padding: 3px 12px;
+  }
+
+  .dark-mode .collection-history-list button {
+    background: #444b5a;
+    color: #eee;
+    border: 1px solid #666c80;
+  }
+
+  .collection-history-empty {
+    color: #bbb;
+    font-style: italic;
+    text-align: center;
+    width: 100%;
+    padding: 20px 0;
+    font-size: 1em;
+    background: transparent;
+    margin: 0 auto;
+    box-sizing: border-box;
+  }
+
+  .dark-mode .collection-history-empty {
+    color: #ccc;
+  }
