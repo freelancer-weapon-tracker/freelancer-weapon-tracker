@@ -15,7 +15,12 @@
     <h1 class="title">Hitman Freelancer Weapon&nbsp;Tracker</h1>
     <div class="button-container">
       <button class="filter-button" onclick="toggleSettingsMenu()">Settings</button>
-      <div id="collected-count"></div>
+      <div class="progress-container">
+        <div id="collected-count"></div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+      </div>
       <button class="reset-btn" onclick="toggleResetMenu()">Reset</button>
     </div>
     <div class="filter-container">
@@ -484,6 +489,45 @@
       const totalWeapons = Object.values(weaponsData).filter(weaponData => selectedRarities.has(weaponData.rarity.toLowerCase())).length;
       const collectedCount = collectedWeapons.filter(weaponName => selectedRarities.has(weaponsData[weaponName].rarity.toLowerCase())).length;
       document.getElementById('collected-count').innerHTML = `<b>Collected</b><br/>${collectedCount}/${totalWeapons}`;
+      
+      // Update progress bar
+      const progressPercentage = totalWeapons > 0 ? (collectedCount / totalWeapons) * 100 : 0;
+      const progressFill = document.getElementById('progress-fill');
+      progressFill.style.width = `${progressPercentage}%`;
+      
+      // Update progress bar color
+      if (collectedCount === totalWeapons && progressPercentage === 100) {
+        // Special 100% completion
+        progressFill.className = 'progress-fill complete';
+        progressFill.style.background = ''; // Clear inline style to use CSS class
+      } else {
+        // Smooth color interpolation from red to green with gradient
+        progressFill.className = 'progress-fill';
+        progressFill.style.background = getProgressColor(progressPercentage);
+      }
+    }
+
+    function getProgressColor(percentage) {
+      // Smooth interpolation from red (0%) to green (99%)
+      // Red: #e74c3c (231, 76, 60)
+      // Green: #27ae60 (39, 174, 96)
+      
+      const startColor = { r: 231, g: 76, b: 60 };   // Red
+      const endColor = { r: 39, g: 174, b: 96 };     // Green
+      
+      // Normalize percentage to 0-1 range
+      const ratio = Math.min(percentage / 100, 0.99); // Cap at 99% to reserve 100% for special green
+      
+      // Interpolate each color component
+      const r = Math.round(startColor.r + (endColor.r - startColor.r) * ratio);
+      const g = Math.round(startColor.g + (endColor.g - startColor.g) * ratio);
+      const b = Math.round(startColor.b + (endColor.b - startColor.b) * ratio);
+      
+      // Create gradient effect with slightly lighter right side
+      const baseColor = `rgb(${r}, ${g}, ${b})`;
+      const lighterColor = `rgb(${Math.min(255, r + 25)}, ${Math.min(255, g + 25)}, ${Math.min(255, b + 25)})`;
+      
+      return `linear-gradient(90deg, ${baseColor}, ${lighterColor})`;
     }
 
     function renderCollectionHistory() {
