@@ -32,7 +32,7 @@
               Weapons</label>
           </div>
           <div class="filters-section">
-            <div class="section-title">Displayed Types/Rarities</div>
+            <div class="section-title">Displayed</div>
             <label><input type="checkbox" data-rarity="tool" checked onchange="updateRarities()"> Freelancer
               Tools</label>
             <label><input type="checkbox" data-rarity="common" checked onchange="updateRarities()"> Common</label>
@@ -68,7 +68,7 @@
       <div>All weapons collected.</div>
       <div id="hidden-rarities"></div>
       <br>
-      <div>Use the <b>Reset</b> menu to reset.</div>
+      <div>Use the <a href="#" class="reset-link" onclick="toggleResetMenu(); return false;">Reset</a> menu to reset.</div>
     </div>
     <!-- Move history below the done-container -->
     <hr id="history-separator" class="history-separator">
@@ -307,6 +307,8 @@
       }
     }
 
+
+
     function toggleFilterMenu() {
       const filterMenu = document.querySelector('.filters');
       filterMenu.classList.toggle('active');
@@ -371,7 +373,7 @@
         }
       });
       if (hiddenRarities.length > 0) {
-        hiddenRaritiesElement.textContent = `(Hidden Types/Rarities: ${hiddenRarities.join(', ')})`;
+        hiddenRaritiesElement.textContent = `(Hidden: ${hiddenRarities.join(', ')})`;
       } else {
         hiddenRaritiesElement.textContent = '';
       }

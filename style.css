@@ -507,3 +507,18 @@ button {
 .dark-mode .collection-history-empty {
   color: #ccc;
 }
+
+.reset-link {
+  color: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.reset-link:hover {
+  text-decoration: underline;
+}
+
+.dark-mode .reset-link {
+  color: inherit;
+}
