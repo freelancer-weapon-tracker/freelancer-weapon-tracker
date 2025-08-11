@@ -178,11 +178,11 @@ button.accordion {
 }
 
 .collected.weapon {
-  background: #8f8;
+  background-color: #a5d6a7;
 }
 
 .dark-mode .collected.weapon {
-  background: #1f7a00;
+  background-color: #2e7d32;
 }
 
 .reset-menu-container {
