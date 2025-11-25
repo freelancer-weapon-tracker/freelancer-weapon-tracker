@@ -508,7 +508,7 @@ const locations = {
     },
     {
       "name": "Golden Sawed Off Bartoli 12G",
-      "description": "Unlocked via the bank robbery easter egg. Disguise as the bank robber and then steal the 7 gold bars from the vault without setting off the alarm (or, wait to steal the bars after the alarm ends)"
+      "description": "Unlocked via the bank robbery easter egg. Disguise as the bank robber and then steal the 7 gold bars from the vault without you or guards setting off the alarm (or, wait until after the alarm ends before stealing the bars)"
     },
     {
       "name": "HX-7",
