@@ -520,3 +520,32 @@ button {
 .dark-mode .reset-link {
   color: inherit;
 }
+.footer {
+  text-align: center;
+  padding: 30px 20px 20px 20px;
+  margin-top: 20px;
+  font-size: 0.9em;
+  color: #888;
+}
+
+.footer a {
+  color: #666;
+  text-decoration: none;
+}
+
+.footer a:hover {
+  color: #333;
+  text-decoration: underline;
+}
+
+.dark-mode .footer {
+  color: #aaa;
+}
+
+.dark-mode .footer a {
+  color: #999;
+}
+
+.dark-mode .footer a:hover {
+  color: #ccc;
+}
