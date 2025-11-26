@@ -1,5 +1,13 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
 body {
   font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
 }
 
 body.dark-mode {
@@ -20,6 +28,7 @@ body.dark-mode {
   max-width: 800px;
   margin: auto;
   padding: 4px;
+  flex: 1;
 }
 
 .filter-menu {
@@ -491,7 +500,7 @@ button {
 }
 
 .collection-history-empty {
-  color: #bbb;
+  color: #999;
   font-style: italic;
   text-align: center;
   width: 100%;
@@ -503,7 +512,7 @@ button {
 }
 
 .dark-mode .collection-history-empty {
-  color: #ccc;
+  color: #aaa;
 }
 
 .reset-link {
@@ -523,29 +532,33 @@ button {
 .footer {
   text-align: center;
   padding: 30px 20px 20px 20px;
-  margin-top: 20px;
-  font-size: 0.9em;
-  color: #888;
+  margin-top: 40px;
+  border-top: 2px solid #d0d0d0;
+  font-size: 0.85em;
+  color: #666;
+  background-color: #f9f9f9;
 }
 
 .footer a {
-  color: #666;
+  color: #aaa;
   text-decoration: none;
 }
 
 .footer a:hover {
-  color: #333;
+  color: #666;
   text-decoration: underline;
 }
 
 .dark-mode .footer {
-  color: #aaa;
+  color: #999;
+  border-top-color: #444;
+  background-color: #1a1a1a;
 }
 
 .dark-mode .footer a {
-  color: #999;
+  color: #666;
 }
 
 .dark-mode .footer a:hover {
-  color: #ccc;
+  color: #999;
 }
